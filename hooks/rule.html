@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Hook规则 | 想飞的博客</title>
+    <meta name="description" content="">
+    
+    
+    <link rel="preload" href="/assets/css/0.styles.97403009.css" as="style"><link rel="preload" href="/assets/js/app.7a1b9521.js" as="script"><link rel="preload" href="/assets/js/2.9b331f86.js" as="script"><link rel="preload" href="/assets/js/8.80db22a6.js" as="script"><link rel="prefetch" href="/assets/js/10.04644d89.js"><link rel="prefetch" href="/assets/js/11.7300945e.js"><link rel="prefetch" href="/assets/js/12.46ef6341.js"><link rel="prefetch" href="/assets/js/13.85000973.js"><link rel="prefetch" href="/assets/js/14.140f8a76.js"><link rel="prefetch" href="/assets/js/15.5fabd384.js"><link rel="prefetch" href="/assets/js/16.b68f2940.js"><link rel="prefetch" href="/assets/js/17.2270ee9a.js"><link rel="prefetch" href="/assets/js/18.a963fd37.js"><link rel="prefetch" href="/assets/js/3.56a427cc.js"><link rel="prefetch" href="/assets/js/4.9d04723a.js"><link rel="prefetch" href="/assets/js/5.1ba9e116.js"><link rel="prefetch" href="/assets/js/6.9ae1defd.js"><link rel="prefetch" href="/assets/js/7.7e6f9297.js"><link rel="prefetch" href="/assets/js/9.3e0ffbc8.js">
+    <link rel="stylesheet" href="/assets/css/0.styles.97403009.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/" class="home-link router-link-active"><!----> <span class="site-name">想飞的博客</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/guide/" class="nav-link">Guide</a></div><div class="nav-item"><a href="/hooks/introduction.html" class="nav-link">hooks</a></div><div class="nav-item"><a href="/webpack/introduction.html" class="nav-link">webpack</a></div> <!----></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/guide/" class="nav-link">Guide</a></div><div class="nav-item"><a href="/hooks/introduction.html" class="nav-link">hooks</a></div><div class="nav-item"><a href="/webpack/introduction.html" class="nav-link">webpack</a></div> <!----></nav>  <ul class="sidebar-links"><li><section class="sidebar-group depth-0"><p class="sidebar-heading open"><span>hooks</span> <!----></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/hooks/introduction.html" class="sidebar-link">Hooks简介</a></li><li><a href="/hooks/useState.html" class="sidebar-link">useState</a></li><li><a href="/hooks/useEffect.html" class="sidebar-link">useEffect</a></li><li><a href="/hooks/rule.html" class="active sidebar-link">Hook规则</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/hooks/rule.html#只在最顶层使用hook" class="sidebar-link">只在最顶层使用Hook</a></li><li class="sidebar-sub-header"><a href="/hooks/rule.html#只在react函数中调用hook" class="sidebar-link">只在React函数中调用Hook</a></li><li class="sidebar-sub-header"><a href="/hooks/rule.html#eslint-插件" class="sidebar-link">ESLint 插件</a></li></ul></li><li><a href="/hooks/custom.html" class="sidebar-link">自定义Hook</a></li><li><a href="/hooks/useContext.html" class="sidebar-link">useContext</a></li><li><a href="/hooks/useRef.html" class="sidebar-link">useRef</a></li><li><a href="/hooks/useMemo.html" class="sidebar-link">useMemo</a></li><li><a href="/hooks/useReducer.html" class="sidebar-link">useReducer</a></li><li><a href="/hooks/yourHooks.html" class="sidebar-link">hooks实现</a></li></ul></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="hook规则"><a href="#hook规则" aria-hidden="true" class="header-anchor">#</a> Hook规则</h1> <h2 id="只在最顶层使用hook"><a href="#只在最顶层使用hook" aria-hidden="true" class="header-anchor">#</a> 只在最顶层使用Hook</h2> <p><code>不要在循环，条件或嵌套函数中调用 Hook</code>， 确保总是在你的 React 函数的最顶层调用他们。遵守这条规则，你就能确保 Hook 在每一次渲染中都按照同样的顺序被调用。这让 React 能够在多次的 useState 和 useEffect 调用之间保持 hook 状态的正确。</p> <h2 id="只在react函数中调用hook"><a href="#只在react函数中调用hook" aria-hidden="true" class="header-anchor">#</a> 只在React函数中调用Hook</h2> <ul><li><strong>在 React 的函数组件中调用 Hook</strong></li> <li><strong>在自定义 Hook 中调用其他 Hook</strong></li></ul> <h2 id="eslint-插件"><a href="#eslint-插件" aria-hidden="true" class="header-anchor">#</a> ESLint 插件</h2> <p>使用ESLint 插件强制遵守这两条规则</p> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token function">npm</span> <span class="token function">install</span> eslint-plugin-react-hooks --save-dev
+</code></pre></div><div class="language-bash extra-class"><pre class="language-bash"><code>// 你的 ESLint 配置
+<span class="token punctuation">{</span>
+  <span class="token string">&quot;plugins&quot;</span><span class="token keyword">:</span> <span class="token punctuation">[</span>
+    // <span class="token punctuation">..</span>.
+    <span class="token string">&quot;react-hooks&quot;</span>
+  <span class="token punctuation">]</span>,
+  <span class="token string">&quot;rules&quot;</span><span class="token keyword">:</span> <span class="token punctuation">{</span>
+    // <span class="token punctuation">..</span>.
+    <span class="token string">&quot;react-hooks/rules-of-hooks&quot;</span><span class="token keyword">:</span> <span class="token string">&quot;error&quot;</span>, // 检查 Hook 的规则
+    <span class="token string">&quot;react-hooks/exhaustive-deps&quot;</span><span class="token keyword">:</span> <span class="token string">&quot;warn&quot;</span> // 检查 effect 的依赖
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div></div> <footer class="page-edit"><!----> <!----></footer> <div class="page-nav"><p class="inner"><span class="prev">
+        ←
+        <a href="/hooks/useEffect.html" class="prev">
+          useEffect
+        </a></span> <span class="next"><a href="/hooks/custom.html">
+          自定义Hook
+        </a>
+        →
+      </span></p></div> </main></div><div class="global-ui"><!----></div></div>
+    <script src="/assets/js/app.7a1b9521.js" defer></script><script src="/assets/js/2.9b331f86.js" defer></script><script src="/assets/js/8.80db22a6.js" defer></script>
+  </body>
+</html>
