@@ -16,7 +16,7 @@ module.exports = {
         {
           text: '基础',
           items: [
-            { text: 'JavaScript', link: '/passages/2019-07-09-js-this/' }
+            { text: 'JavaScript', link: '/passages/2019-07-09-js-context/' }
           ]
         }
       ]
