@@ -39,7 +39,8 @@ const frontend = [
 ]
 
 const tool = [
-  'markdown'
+  'markdown',
+  'git'
 ]
 
 module.exports = {
