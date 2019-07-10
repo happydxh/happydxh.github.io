@@ -22,6 +22,10 @@ module.exports = {
       ]
     },
     { text: 'hooks', link: '/hooks/introduction' },
-    { text: 'webpack', link: '/webpack/introduction' }
+    { text: 'webpack', link: '/webpack/introduction' },
+    { text: '工具', items: [
+        { text: 'markdown语法', link: '/passages/2019-07-10-tool-markdown/' }
+      ] 
+    }
   ]
 }

@@ -38,8 +38,13 @@ const frontend = [
   }
 ]
 
+const tool = [
+  'markdown'
+]
+
 module.exports = {
   '/hooks/': hooks,
   '/webpack/': webpack,
-  '/大前端/': frontend
+  '/大前端/': frontend,
+  '/工具/': tool
 }
