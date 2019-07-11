@@ -8,6 +8,16 @@ module.exports = {
     '@vuepress/back-to-top',
     [
       '@vuepress/google-analytics', { 'ga': 'UA-143666793-1' }
+    ],
+    [
+      '@vuepress/pwa',
+      {
+        serviceWorker: true,
+        updatePopup: {
+          message: "发现页面有新内容",
+          buttonText: "刷新"
+        }
+      }
     ]
   ] 
 }
