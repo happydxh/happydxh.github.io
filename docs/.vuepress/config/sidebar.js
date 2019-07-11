@@ -43,9 +43,14 @@ const tool = [
   'git'
 ]
 
+const solution = [
+  'webpack打包上线环境配置'
+]
+
 module.exports = {
   '/hooks/': hooks,
   '/webpack/': webpack,
   '/大前端/': frontend,
-  '/工具/': tool
+  '/工具/': tool,
+  '/解决方案/': solution
 }

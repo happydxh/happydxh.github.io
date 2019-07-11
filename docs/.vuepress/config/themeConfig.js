@@ -28,6 +28,12 @@ module.exports = {
         { text: 'git', link: '/passages/2019-07-10-tool-git/' }
       ] 
     },
+    {
+      text: '解决方案',
+      items: [
+        { text: 'webpack打包上线环境配置', link: '/passages/2019-07-11-solution-webpack-env/' }
+      ] 
+    },
     { text: 'hooks', link: '/hooks/introduction' },
     { text: 'webpack', link: '/webpack/introduction' }
   ]

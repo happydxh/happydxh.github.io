@@ -1,6 +1,6 @@
 ---
 title: "git"
-date: "2019-07-09"
+date: "2019-07-10"
 permalink: "2019-07-10-tool-git"
 ---
 
