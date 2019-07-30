@@ -31,7 +31,8 @@ module.exports = {
     {
       text: '解决方案',
       items: [
-        { text: 'webpack打包上线环境配置', link: '/passages/2019-07-11-solution-webpack-env/' }
+        { text: 'webpack打包上线环境配置', link: '/passages/2019-07-11-solution-webpack-env/' },
+        { text: 'ssr服务端渲染', link: '/passages/2019-07-29-ssr/' }
       ] 
     },
     { text: 'hooks', link: '/hooks/introduction' },

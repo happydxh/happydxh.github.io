@@ -1,7 +1,7 @@
 ---
 title: "ssr服务端渲染"
 date: "2019-07-29"
-permalink: "2019-07-11-ssr"
+permalink: "2019-07-29-ssr"
 ---
 
 ### SSR vs CSR vs 同构
