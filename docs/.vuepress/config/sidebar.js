@@ -44,7 +44,8 @@ const tool = [
 ]
 
 const solution = [
-  'webpack打包上线环境配置'
+  'webpack打包上线环境配置',
+  'ssr服务端渲染'
 ]
 
 module.exports = {
