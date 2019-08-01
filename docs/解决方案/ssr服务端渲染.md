@@ -293,4 +293,128 @@ app.listen(8888, (err) => {
 })
 ```
 
-至此，我们就实现来同构，绑定事件完成
+至此，我们就实现了同构，绑定事件完成
+
+## 同构路由
+
+完成了上面的简单同构之后，我们接来下继续在我们的项目中引入路由，首先是客户端，客户端路由的写法和我们平时写路由是一样的
+
+我们先新建一个list页面
+```js
+// containers/List.js
+import React from 'react'
+
+export default function List() {
+  return (
+    <div>
+      这里是list
+    </div>
+  )
+}
+```
+
+新增一个router.js文件来处理路由
+```js
+import React from 'react';
+import { Route } from 'react-router-dom'
+import Home from './containers/Home';
+import List from './containers/List'
+
+export default (
+  <>
+    <Route path='/' exact component={Home}></Route>
+    <Route path='/list' exact component={List}></Route>
+  </>
+)
+```
+
+然后修改一下我们客户端的主文件
+```js
+import React from 'react';
+import ReactDom from 'react-dom';
+import { BrowserRouter } from 'react-router-dom'
+import Routes from '../router'
+
+const App = () => {
+  return (
+    <BrowserRouter>
+      {Routes}
+    </BrowserRouter>
+  )
+}
+
+ReactDom.hydrate(<App />, document.getElementById('root'))
+```
+这样客户端的路由便做好了，我们在Home页面中新增一个按钮跳转到List页面
+```js
+import React from 'react';
+const Home = (props) => {
+  const go = () => {
+    props.history.push('/list')
+  }
+  return (
+    <>
+      <div>This is home page</div>
+      <button onClick={ () => { alert('click') } }>click</button>
+      <button onClick={ go }>toList</button>
+    </>
+  )
+}
+export default Home
+```
+点击toList按钮，我们如愿的跳转到了list，完成了路由跳转，但我们右键打开源代码查看，却发现
+```html
+<html>
+  <head>
+    <title>hello</title>
+  </head>
+  <body>
+    <div id="root"><div>This is home page</div><button>click</button><button>toList</button></div>
+    <script src="/index.js"></script>
+  </body>
+</html>
+```
+源码还是home页面的代码，并没有改变，这不是我们希望看到的这将不利于list页面的seo  
+
+所以我们还得继续对服务端的路由进行处理，让路由代码在服务端再执行一遍，实现同构
+
+服务端代码修改如下
+
+```js
+const Koa = require('koa');
+const staticFile = require('koa-static');
+import { renderToString } from 'react-dom/server';
+import React from 'react';
+import { StaticRouter } from 'react-router-dom'; 
+import Routes from '../router'
+
+const app = new Koa();
+
+app.use(staticFile('public'));
+
+app.use(async ctx => {
+  // 关键的，我们使用了StaticRouter
+  const content = renderToString(
+    <StaticRouter location={ctx.request.url} >
+      {Routes}
+    </StaticRouter>
+  );
+  ctx.body = 
+  `<html>
+    <head>
+      <title>hello</title>
+    </head>
+    <body>
+      <div id="root">${content}</div>
+      <script src="/index.js"></script>
+    </body>
+  </html>`;
+});
+
+app.listen(8888, (err) => {
+  if (err) throw err
+  console.log('localhost:8888')
+})
+```
+
+这样当我们再次切换到list时，就能够看到list页面对应的源码了
