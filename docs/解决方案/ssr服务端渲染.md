@@ -418,3 +418,96 @@ app.listen(8888, (err) => {
 ```
 
 这样当我们再次切换到list时，就能够看到list页面对应的源码了
+
+## 同构redux
+
+这一块，我们继续将redux引入我们的项目中，redux的概念我们不多说，快速的现在客户端将它搭建起来  
+
+首先我们安装两个包
+
+```bash
+npm install react-redux redux -S
+```
+
+然后在创建一个redux,在里面放入
+
+```js
+// rudex/home.redux.js
+const HOME_DATA = 'HOME_DATA'
+
+const initState = {
+  info: '这里是主页'
+}
+
+// reducer
+export function home(state = initState, action) {
+  switch (action.type) {
+  case HOME_DATA:
+    return { ...state, ...action.payload }
+  default:
+    return state
+  }
+}
+
+// action
+export function changeHomeData(homeData) {
+  return { type: HOME_DATA, payload: homeData }
+}
+```
+
+```js
+// redux/index.js
+// 组合器 合并所有reducer 并且返回 
+import {createStore, combineReducers} from 'redux';
+import { home } from './home.rudex'
+
+const reducer = combineReducers({ home })
+
+//导出创建的store
+export default createStore(reducer)
+```
+
+然后将redux/index.js中的store分别引入到客户端和服务端中去
+
+客户端
+```js
+import { Provider } from 'react-redux';
+import store from '../redux'
+
+<Provider store={store}>
+  <BrowserRouter>
+    {Routes}
+  </BrowserRouter>
+</Provider>
+```
+
+服务端
+```js
+import { Provider } from 'react-redux';
+import store from '../redux'
+
+const content = renderToString(
+  <Provider store={store}>
+    <StaticRouter location={ctx.request.url} >
+      {Routes}
+    </StaticRouter>
+  </Provider>
+)
+```
+
+两者引入方式相同，都是通过Provider引入，到这里同构中引入redux基本完成，但是这里还存在一个潜在的问题，就是上面`redux/index.js`中的`store`是直接导出的，这样在客户端引用的时候是不会出现问题，但是在服务端的代码是给所有用户使用的，这样会导致所有用户共用一个store
+
+对`redux/index.js`中做如下修改
+```js
+// 导出创建的store
+// 这种写法在客户端可取，但在服务器端会导致所有用户共用了同一个状态
+// export default createStore(reducer)
+export default () => createStore(reducer)
+```
+修改以后，这时在客户端和服务端引入的store就是一个函数，我们把store函数执行就可以得到一个新的store
+
+```js
+<Provider store={store()}>
+
+</Provider>
+```
