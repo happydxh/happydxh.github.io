@@ -1,10 +1,9 @@
 const sidebar = require('./sidebar')
 
 module.exports = {
-  editLinks: false,
+  repo: 'https://github.com/happydxh/happydxh.github.io',
   docsDir: 'docs',
-  docsBranch: 'docs',
-  editLinks: true,
+  // editLinks: true,
   lastUpdated: '更新于',
   serviceWorker: {
     updatePopup: true
