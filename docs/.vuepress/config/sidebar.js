@@ -40,7 +40,8 @@ const frontend = [
 
 const tool = [
   'markdown',
-  'git'
+  'git',
+  'travis-ci'
 ]
 
 const solution = [

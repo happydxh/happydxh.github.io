@@ -516,3 +516,252 @@ export default () => createStore(reducer, applyMiddleware(thunk))
 
 ## 异步数据获取
 
+#### 客户端获取数据
+
+我们在react单页运用开发中，经常会在生命周期`componentDidMount`中请求接口来获取服务端的数据，但是在服务端渲染中这样请求数据却会出现问题
+
+我们需要异步获取数据，首先对redux做一点修改，引入redux-thunk相关逻辑
+```js
+// redux/home.redux.js 修改
+import axios from 'axios'
+
+const CHANGE_INFO = 'CHANGE_INFO'
+const CHANGE_LIST = 'CHANGE_LIST'
+
+const initState = {
+  info: '这里是主页',
+  list: []
+}
+
+// reducer
+export function home(state = initState, action) {
+  switch (action.type) {
+    case CHANGE_INFO:
+      return { ...state, info: action.info }
+    case CHANGE_LIST:
+      return { ...state, list: action.list }
+    default:
+      return state
+  }
+}
+
+// action
+export function changeInfo(info) {
+  return { type: CHANGE_INFO, info }
+}
+
+export function changeList(list) {
+  return { type: CHANGE_LIST, list }
+}
+
+// redux-thunk
+export const getHomeList = () => {
+  return ( dispatch, getState ) => {
+    return axios.get('http://localhost:9999/list').then(res => {
+      const list = res.data
+      dispatch(changeList(list))
+    })
+  }
+}
+```
+
+在修改home.redux.js文件后，我们看到我们新增了一个异步获取数据的方法`getHomeList`，它请求了一个接口，接口是我们在根目录下开起了另外一个koa服务模拟的
+```js
+// server.js
+const Koa = require('koa')
+const router = require('koa-router')()
+const cors = require('koa-cors')
+
+const app = new Koa()
+
+app.use(cors({
+  maxAge: 3600
+}))
+
+router.get('/list', (ctx, next) => {
+  ctx.body = ['看书', '写字', '听歌']
+  next()
+})
+
+// 启动路由
+app.use(router.routes())
+
+app.listen(9999, (err) => {
+  if (err) throw err
+  console.log('localhost:9999')
+})
+```
+
+然后在package.json的`scripts`中新增启动服务命令
+```bash
+"dev:server": "nodemon server.js"
+```
+这样我们在使用npm run dev启动项目的时候，顺带也会将server.js的服务启动
+
+
+然后我们在Home组件的`componentDidMount`调用getHomeList，并将获取的数据循环渲染出来
+```js
+componentDidMount() {
+  props.getHomeList()
+}
+```
+我们可以看到，接口请求成功，并且页面上的数据也渲染了出来，但当我们右键查看源代码时，却发现并没有我们循环渲染数据的标签，这是为什么呢  
+
+让我们来分析一下户端和服务端的运行流程，浏览器执行请求时，服务端接收到请求，这是服务端的store是空的，并向浏览器端输出html模版，浏览器端接口html字符串并下载js并执行，这是浏览器端的store也是空的，当执行到`componentDidMount`请求getHomeList后，浏览器端的store有来数据，但是服务器端的`componentDidMount`确始终不会执行，所有源代码不会出现我们想看到的标签  
+
+接下来我们的任务就是让获取数据的操作在服务端执行，并在服务端渲染
+
+#### 服务端获取数据
+
+要达到获取数据的操作在服务端执行，我们需要先将路由改造一下
+
+```js
+// router.js
+import Home from './containers/Home';
+import List from './containers/List'
+
+export default [
+  {
+    path: "/",
+    component: Home,
+    exact: true,
+    loadData: Home.loadData, // 服务端获取异步数据的函数
+    key: 'home'
+  },
+  {
+    path: '/list',
+    component: List,
+    exact: true,
+    key: 'list'
+  }
+]
+```
+
+客户端和服务端引入路由的方式也需要相应的改变
+
+客户端
+```js
+<Provider store={store}>
+  <BrowserRouter>
+    <Switch>
+      {
+        renderRoutes(routeConfig)
+      }
+    </Switch>
+  </BrowserRouter>
+</Provider>
+```
+服务端
+```js
+<Provider store={store}>
+  <StaticRouter location={ctx.request.url}>
+    <Switch>{renderRoutes(routeConfig)}</Switch>
+  </StaticRouter>
+</Provider>
+```
+
+我们在router.js的路由配置数据中，配置了一个loadData函数，这个参数代表了在服务端获取数据的函数，现在我们的目标就是如何让这个函数在服务端执行，并且要针对不同路由组件匹配不用的loadData函数
+
+```js
+app.use(async ctx => {
+  const store = getStore();
+  // 调用matchRoutes用来匹配当前路由(支持多级路由)
+  const matchedRoutes = matchRoutes(routeConfig, ctx.request.url);
+  const promises = [];
+  matchedRoutes.forEach(item => {
+    // 如果这个路由对应的组件有loadData方法
+    if (item.route.loadData) {
+      // 那么就执行一次, 并将store传进去
+      // loadData函数调用后需要返回Promise对象
+      promises.push(item.route.loadData(store));
+    };
+  });
+  await Promise.all(promises)
+
+  const content = renderToString(
+    <Provider store={store}>
+      <StaticRouter location={ctx.request.url}>
+        <Switch>{renderRoutes(routeConfig)}</Switch>
+      </StaticRouter>
+    </Provider>
+  )
+  ctx.body = `<html>
+    <head>
+      <title>hello</title>
+    </head>
+    <body>
+      <div id="root">${content}</div>
+      <script>
+        window.context = {
+          state: ${JSON.stringify(store.getState())}
+        }
+      </script>
+      <script src="/index.js"></script>
+    </body>
+  </html>`
+})
+```
+
+经过上面的处理，我们就可以在组件中调用loadData函数了
+```js
+Home.loadData = store => {
+  return store.dispatch(getHomeList())
+}
+```
+
+这样服务端渲染中异步获取数据就完成了，然而，解决了这个问题之后，另一个问题又来了
+
+## 数据的 脱水 和 注水
+
+如果我们将客户端`componentDidMount`中获取数据的代码注释掉会发现，现在页面中不会有数据，但是源码码中却有数据。这是为什么？
+
+我们来分析一下，源码码中却有数据，说明服务端中的store已经注入来数据，而客户端没有渲染出来，是因为服务端没有把数据同步给客户端，同时`componentDidMount`中请求接口的代码我们又注释掉了，这时客户端中的store依旧是空的
+
+那如何才能让这两个store的数据同步变化呢?
+
+解决这个问题的流程，其实就是数据的 脱水 和 注水
+
+在服务端，拿到数据更新store后，在服务器端响应页面HTML的时候，将store中的数据一并传递给浏览器，这叫`脱水`
+```js
+ctx.body = `<html>
+  <head>
+    <title>hello</title>
+  </head>
+  <body>
+    <div id="root">${content}</div>
+    <script>
+      // 脱水
+      window.context = {
+        state: ${JSON.stringify(store.getState())}
+      }
+    </script>
+    <script src="/index.js"></script>
+  </body>
+</html>`
+```
+
+然后在客户端，接收到服务端发送过来的页面后，就可以在`window`对象上获取store中的数据
+```js
+// redux/index.js
+export const getStore = () => {
+  return createStore(reducer, applyMiddleware(thunk))
+}
+
+export const getClientStore = () => {
+  // 从服务器端输出的页面上拿到脱水的数据
+  const defaultState = window.context ? window.context.state : {}
+  // 当做 store的初始数据（即注水）
+  return createStore(reducer, defaultState, applyMiddleware(thunk))
+}
+```
+
+到这里数据的 脱水 和 注水也已经完成，但是还有一点小问题，就当服务端获取数据，并将数据传给客户端后，客户端其实是不需要再进行数据请求的，这是我们做一些小处理，便可以规避此问题
+
+```js
+componentDidMount() {
+  // 如果props.list中已经有数据了，我们就不再请求
+  if (!props.list.length) {
+    props.getHomeList()
+  }
+}
+```
