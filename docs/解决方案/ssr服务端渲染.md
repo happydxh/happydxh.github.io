@@ -4,6 +4,8 @@ date: "2019-07-29"
 permalink: "2019-07-29-ssr"
 ---
 
+项目地址：[github](https://github.com/happydxh/react-ssr)
+
 ## SSR vs CSR vs 同构
 
 首先我们先来了解三个概念
@@ -426,7 +428,7 @@ app.listen(8888, (err) => {
 首先我们安装两个包
 
 ```bash
-npm install react-redux redux -S
+npm install react-redux redux redux-thunk -S
 ```
 
 然后在创建一个redux,在里面放入
@@ -456,15 +458,15 @@ export function changeHomeData(homeData) {
 ```
 
 ```js
-// redux/index.js
 // 组合器 合并所有reducer 并且返回 
-import {createStore, combineReducers} from 'redux';
+import { createStore, combineReducers, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
 import { home } from './home.rudex'
 
 const reducer = combineReducers({ home })
 
-//导出创建的store
-export default createStore(reducer)
+// 导出创建的store
+export default createStore(reducer, applyMiddleware(thunk))
 ```
 
 然后将redux/index.js中的store分别引入到客户端和服务端中去
@@ -501,8 +503,8 @@ const content = renderToString(
 ```js
 // 导出创建的store
 // 这种写法在客户端可取，但在服务器端会导致所有用户共用了同一个状态
-// export default createStore(reducer)
-export default () => createStore(reducer)
+// export default createStore(reducer, applyMiddleware(thunk))
+export default () => createStore(reducer, applyMiddleware(thunk))
 ```
 修改以后，这时在客户端和服务端引入的store就是一个函数，我们把store函数执行就可以得到一个新的store
 
@@ -511,3 +513,6 @@ export default () => createStore(reducer)
 
 </Provider>
 ```
+
+## 异步数据获取
+

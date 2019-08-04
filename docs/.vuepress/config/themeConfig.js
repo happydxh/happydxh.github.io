@@ -3,6 +3,8 @@ const sidebar = require('./sidebar')
 module.exports = {
   editLinks: false,
   docsDir: 'docs',
+  docsBranch: 'docs',
+  editLinks: true,
   lastUpdated: '更新于',
   serviceWorker: {
     updatePopup: true
