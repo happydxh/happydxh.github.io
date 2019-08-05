@@ -9,7 +9,7 @@ permalink: "2019-07-29-ssr"
 ## SSR vs CSR vs 同构
 
 首先我们先来了解三个概念
-> SSR - `服务端渲染`，指后端服务器直接html字符串，让浏览器显示  
+> SSR - `服务端渲染`，指后端服务器直接返回html字符串，让浏览器显示  
 > CSR - `客户端渲染`，指使用js来渲染页面大部分内容，如react构建的`SPA`单页面应用  
 > 同构 - `同构渲染`，指一套相同的代码在服务端执行一遍，然后在客户端又执行一遍  
 
@@ -29,7 +29,7 @@ app.use(async ctx => {
       <h1>hello</h1>
       <p>world</p>
     </body>
-  </html>`;
+  </html>`
 });
 
 app.listen(8888, (err) => {
@@ -53,7 +53,7 @@ app.listen(8888, (err) => {
 
 ## 客户端渲染
 #### 什么是客户端渲染
-我们使用create-react-app脚手架创建一个项目，然后启动他，在浏览器上右键查看源代码，我们可以看到index页面除了基本的页面结构，只有一个id为root的标签，并没有多于的DOM标签，那么我们看到的其他内容是从那里来的呢，很明显是下面的script中拉取的js代码渲染的。
+我们使用create-react-app脚手架创建一个项目，然后启动他，在浏览器上右键查看源代码，我们可以看到index页面除了基本的页面结构，只有一个id为root的标签，并没有多于的DOM标签，那么我们看到的其他内容是从那里来的呢，很明显是下面script拉取的js代码来执行渲染的。
 #### 客户端渲染的弊端
 - 客户端渲染需要下载一堆js和css后才能渲染页面，首屏加载慢出现白屏问题
 - 对于SEO，完全无能为力，因为搜索引擎爬虫只认识html结构的内容，而不能识别JS代码内容。
@@ -64,14 +64,14 @@ app.listen(8888, (err) => {
 前面我们实现了一个简单的服务端渲染的例子，通过koa服务返会一段html字符串给浏览器，起一个抛砖引玉的作用，但我们真正要实现的是如何通过react进行服务端渲染  
 
 首先写一个简单的react组件
-// Home.js
+
 ```js
+// Home.js
 import React from 'react';
 const Home = () => {
   return (
     <>
       <div>This is home page</div>
-      <button onClick={ () => { alert('click') } }>click</button>
     </>
   )
 }
@@ -169,16 +169,16 @@ module.exports = {
 ## 同构
 上面我们虽然实现了react组件的服务端渲染，但却只是实现了页面内容的服务端渲染，页面的交互行为却并未生效
 ```js
-import React from 'react';
-const Home = () => {
-  return (
-    <>
-      <div>This is home page</div>
-      <button onClick={ () => { alert('click') } }>click</button>
-    </>
-  )
-}
-export default Home
+  import React from 'react';
+  const Home = () => {
+    return (
+      <>
+        <div>This is home page</div>
++      <button onClick={ () => { alert('click') } }>click</button>
+      </>
+    )
+  }
+  export default Home
 ```
 上面我们在react组件中新加了一个点击事件，重新运行，我们点击按钮，发现并没有起任何作用，这是因为react-dom/server的renderToString并没有做相关事件的处理，只是把虚拟DOM转成了真实的html字符串，我们可以打印一下renderToString返回content的内容
 ```js
@@ -198,7 +198,7 @@ app.use(async ctx => {
     </head>
     <body>
       <div id="root">${content}</div>
-      <script src="/index.js"></script>
++     <script src="/index.js"></script>
     </body>
   </html>`;
 });
@@ -265,34 +265,34 @@ module.exports = {
 
 完整的服务端代码如下
 ```js
-const Koa = require('koa');
-const staticFile = require('koa-static');
-import { renderToString } from 'react-dom/server';
-import React from 'react';
-import Home from '../containers/Home';
+  const Koa = require('koa');
++ const staticFile = require('koa-static');
+  import { renderToString } from 'react-dom/server';
+  import React from 'react';
+  import Home from '../containers/Home';
 
-const app = new Koa();
+  const app = new Koa();
 
-// 静态资源服务
-app.use(staticFile('public'));
-const content = renderToString(<Home />);
-app.use(async ctx => {
-  ctx.body = 
-  `<html>
-    <head>
-      <title>hello</title>
-    </head>
-    <body>
-      <div id="root">${content}</div>
-      <script src="/index.js"></script>
-    </body>
-  </html>`;
-});
+  // 静态资源服务
++ app.use(staticFile('public'));
+  const content = renderToString(<Home />);
+  app.use(async ctx => {
+    ctx.body = 
+    `<html>
+      <head>
+        <title>hello</title>
+      </head>
+      <body>
+        <div id="root">${content}</div>
+        <script src="/index.js"></script>
+      </body>
+    </html>`;
+  });
 
-app.listen(8888, (err) => {
-  if (err) throw err
-  console.log('localhost:8888')
-})
+  app.listen(8888, (err) => {
+    if (err) throw err
+    console.log('localhost:8888')
+  })
 ```
 
 至此，我们就实现了同构，绑定事件完成
@@ -349,20 +349,20 @@ ReactDom.hydrate(<App />, document.getElementById('root'))
 ```
 这样客户端的路由便做好了，我们在Home页面中新增一个按钮跳转到List页面
 ```js
-import React from 'react';
-const Home = (props) => {
-  const go = () => {
-    props.history.push('/list')
+  import React from 'react';
+  const Home = (props) => {
+    const go = () => {
+      props.history.push('/list')
+    }
+    return (
+      <>
+        <div>This is home page</div>
+        <button onClick={ () => { alert('click') } }>click</button>
++       <button onClick={ go }>toList</button>
+      </>
+    )
   }
-  return (
-    <>
-      <div>This is home page</div>
-      <button onClick={ () => { alert('click') } }>click</button>
-      <button onClick={ go }>toList</button>
-    </>
-  )
-}
-export default Home
+  export default Home
 ```
 点击toList按钮，我们如愿的跳转到了list，完成了路由跳转，但我们右键打开源代码查看，却发现
 ```html
@@ -376,47 +376,48 @@ export default Home
   </body>
 </html>
 ```
-源码还是home页面的代码，并没有改变，这不是我们希望看到的这将不利于list页面的seo  
+源码还是home页面的代码，并没有改变，这不是我们希望看到的，这样将不利于list页面的seo  
 
 所以我们还得继续对服务端的路由进行处理，让路由代码在服务端再执行一遍，实现同构
 
 服务端代码修改如下
 
 ```js
-const Koa = require('koa');
-const staticFile = require('koa-static');
-import { renderToString } from 'react-dom/server';
-import React from 'react';
-import { StaticRouter } from 'react-router-dom'; 
-import Routes from '../router'
+  const Koa = require('koa');
+  const staticFile = require('koa-static');
+  import { renderToString } from 'react-dom/server';
+  import React from 'react';
++ import { StaticRouter } from 'react-router-dom'; 
++ import Routes from '../router'
 
-const app = new Koa();
+  const app = new Koa();
 
-app.use(staticFile('public'));
+  app.use(staticFile('public'));
 
-app.use(async ctx => {
-  // 关键的，我们使用了StaticRouter
-  const content = renderToString(
-    <StaticRouter location={ctx.request.url} >
-      {Routes}
-    </StaticRouter>
-  );
-  ctx.body = 
-  `<html>
-    <head>
-      <title>hello</title>
-    </head>
-    <body>
-      <div id="root">${content}</div>
-      <script src="/index.js"></script>
-    </body>
-  </html>`;
-});
+  app.use(async ctx => {
+    // 关键的，我们使用了StaticRouter
+—   const content = renderToString(<Home />)
++   const content = renderToString(
++     <StaticRouter location={ctx.request.url} >
++        {Routes}
++     </StaticRouter>
++   )
+    ctx.body = 
+    `<html>
+      <head>
+        <title>hello</title>
+      </head>
+      <body>
+        <div id="root">${content}</div>
+        <script src="/index.js"></script>
+      </body>
+    </html>`
+  });
 
-app.listen(8888, (err) => {
-  if (err) throw err
-  console.log('localhost:8888')
-})
+  app.listen(8888, (err) => {
+    if (err) throw err
+    console.log('localhost:8888')
+  })
 ```
 
 这样当我们再次切换到list时，就能够看到list页面对应的源码了
@@ -425,17 +426,19 @@ app.listen(8888, (err) => {
 
 这一块，我们继续将redux引入我们的项目中，redux的概念我们不多说，快速的现在客户端将它搭建起来  
 
-首先我们安装两个包
+首先我们安装依赖包
 
 ```bash
 npm install react-redux redux redux-thunk -S
 ```
 
-然后在创建一个redux,在里面放入
+然后在创建一个redux目录,在里面放入
 
 ```js
 // rudex/home.redux.js
-const HOME_DATA = 'HOME_DATA'
+import axios from 'axios'
+
+const CHANGE_INFO = 'CHANGE_INFO'
 
 const initState = {
   info: '这里是主页'
@@ -444,16 +447,16 @@ const initState = {
 // reducer
 export function home(state = initState, action) {
   switch (action.type) {
-  case HOME_DATA:
-    return { ...state, ...action.payload }
-  default:
-    return state
+    case CHANGE_INFO:
+      return { ...state, info: action.info }
+    default:
+      return state
   }
 }
 
 // action
-export function changeHomeData(homeData) {
-  return { type: HOME_DATA, payload: homeData }
+export function changeInfo(info) {
+  return { type: CHANGE_INFO, info }
 }
 ```
 
@@ -523,46 +526,46 @@ export default () => createStore(reducer, applyMiddleware(thunk))
 我们需要异步获取数据，首先对redux做一点修改，引入redux-thunk相关逻辑
 ```js
 // redux/home.redux.js 修改
-import axios from 'axios'
++ import axios from 'axios'
 
-const CHANGE_INFO = 'CHANGE_INFO'
-const CHANGE_LIST = 'CHANGE_LIST'
+  const CHANGE_INFO = 'CHANGE_INFO'
++ const CHANGE_LIST = 'CHANGE_LIST'
 
-const initState = {
-  info: '这里是主页',
-  list: []
-}
-
-// reducer
-export function home(state = initState, action) {
-  switch (action.type) {
-    case CHANGE_INFO:
-      return { ...state, info: action.info }
-    case CHANGE_LIST:
-      return { ...state, list: action.list }
-    default:
-      return state
+  const initState = {
+    info: '这里是主页',
++   list: []
   }
-}
 
-// action
-export function changeInfo(info) {
-  return { type: CHANGE_INFO, info }
-}
-
-export function changeList(list) {
-  return { type: CHANGE_LIST, list }
-}
-
-// redux-thunk
-export const getHomeList = () => {
-  return ( dispatch, getState ) => {
-    return axios.get('http://localhost:9999/list').then(res => {
-      const list = res.data
-      dispatch(changeList(list))
-    })
+  // reducer
+  export function home(state = initState, action) {
+    switch (action.type) {
+      case CHANGE_INFO:
+        return { ...state, info: action.info }
++     case CHANGE_LIST:
++       return { ...state, list: action.list }
+      default:
+        return state
+    }
   }
-}
+
+  // action
+  export function changeInfo(info) {
+    return { type: CHANGE_INFO, info }
+  }
+
++ export function changeList(list) {
++   return { type: CHANGE_LIST, list }
++ }
+
+  // redux-thunk
++ export const getHomeList = () => {
++  return ( dispatch, getState ) => {
++    return axios.get('http://localhost:9999/list').then(res => {
++      const list = res.data
++      dispatch(changeList(list))
++    })
++  }
++ }
 ```
 
 在修改home.redux.js文件后，我们看到我们新增了一个异步获取数据的方法`getHomeList`，它请求了一个接口，接口是我们在根目录下开起了另外一个koa服务模拟的
@@ -605,9 +608,9 @@ componentDidMount() {
   props.getHomeList()
 }
 ```
-我们可以看到，接口请求成功，并且页面上的数据也渲染了出来，但当我们右键查看源代码时，却发现并没有我们循环渲染数据的标签，这是为什么呢  
+我们可以看到，接口请求成功，并且页面上的数据也渲染了出来，但当我们右键查看源代码时，却并没有发现相对应的标签，这是为什么呢  
 
-让我们来分析一下户端和服务端的运行流程，浏览器执行请求时，服务端接收到请求，这是服务端的store是空的，并向浏览器端输出html模版，浏览器端接口html字符串并下载js并执行，这是浏览器端的store也是空的，当执行到`componentDidMount`请求getHomeList后，浏览器端的store有来数据，但是服务器端的`componentDidMount`确始终不会执行，所有源代码不会出现我们想看到的标签  
+让我们来分析一下户端和服务端的运行流程，浏览器执行请求时，服务端接收到请求，这时服务端的store是空的，并向浏览器端输出html模版，浏览器端接口html字符串并下载js执行，这是浏览器端的store也是空的，当执行到`componentDidMount`请求getHomeList后，浏览器端的store有了数据，但是服务器端的`componentDidMount`确始终不会执行，服务端的store依旧是空的，所有源代码不会出现我们想看到的标签  
 
 接下来我们的任务就是让获取数据的操作在服务端执行，并在服务端渲染
 
@@ -641,6 +644,8 @@ export default [
 
 客户端
 ```js
+import { renderRoutes } from 'react-router-config'
+// 引入react-router-config的renderRoutes函数来对路由的配置信息做解析渲染
 <Provider store={store}>
   <BrowserRouter>
     <Switch>
@@ -653,6 +658,8 @@ export default [
 ```
 服务端
 ```js
+import { renderRoutes } from 'react-router-config'
+// 引入react-router-config的renderRoutes函数来对路由的配置信息做解析渲染
 <Provider store={store}>
   <StaticRouter location={ctx.request.url}>
     <Switch>{renderRoutes(routeConfig)}</Switch>
@@ -715,29 +722,28 @@ Home.loadData = store => {
 
 如果我们将客户端`componentDidMount`中获取数据的代码注释掉会发现，现在页面中不会有数据，但是源码码中却有数据。这是为什么？
 
-我们来分析一下，源码码中却有数据，说明服务端中的store已经注入来数据，而客户端没有渲染出来，是因为服务端没有把数据同步给客户端，同时`componentDidMount`中请求接口的代码我们又注释掉了，这时客户端中的store依旧是空的
+我们来分析一下，源码中有数据，说明服务端中的store已经注入来数据，而客户端没有渲染出来，是因为服务端没有把数据同步给客户端，同时`componentDidMount`中请求接口的代码我们又注释掉了，这时客户端中的store依旧是空的
 
 那如何才能让这两个store的数据同步变化呢?
 
-解决这个问题的流程，其实就是数据的 脱水 和 注水
+解决这个问题的流程，其实就是数据的 `脱水` 和 `注水`
 
 在服务端，拿到数据更新store后，在服务器端响应页面HTML的时候，将store中的数据一并传递给浏览器，这叫`脱水`
 ```js
-ctx.body = `<html>
-  <head>
-    <title>hello</title>
-  </head>
-  <body>
-    <div id="root">${content}</div>
-    <script>
-      // 脱水
-      window.context = {
-        state: ${JSON.stringify(store.getState())}
-      }
-    </script>
-    <script src="/index.js"></script>
-  </body>
-</html>`
+  ctx.body = `<html>
+    <head>
+      <title>hello</title>
+    </head>
+    <body>
+      <div id="root">${content}</div>
++     <script>
++       window.context = {
++         state: ${JSON.stringify(store.getState())}
++       }
++     </script>
+      <script src="/index.js"></script>
+    </body>
+  </html>`
 ```
 
 然后在客户端，接收到服务端发送过来的页面后，就可以在`window`对象上获取store中的数据
