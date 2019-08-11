@@ -45,6 +45,9 @@ permalink: "2019-07-10-tool-markdown"
 
 2、两个空格的大小表示：`&emsp;`或`&#8195;`，同理，使用2个即可缩进2个汉字，推荐使用该方式。  
 
+### 空行
+`&nbsp;`
+
 ### 链接
 ```
 [点击这里你可以链接到www.google.com](http://www.google.com)<br />

@@ -38,6 +38,13 @@ module.exports = {
       ] 
     },
     { text: 'hooks', link: '/hooks/introduction' },
-    { text: 'webpack', link: '/webpack/introduction' }
+    { text: 'webpack', link: '/webpack/introduction' },
+    {
+      text: '随手记',
+      items: [
+        { text: '晚间乌云', link: '/passages/2019-08-11-yun/' }
+      ] 
+    },
+    { text: '关于', link: '/about/' }
   ]
 }

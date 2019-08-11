@@ -49,10 +49,15 @@ const solution = [
   'ssr服务端渲染'
 ]
 
+const notes = [
+  '晚间乌云'
+]
+
 module.exports = {
   '/hooks/': hooks,
   '/webpack/': webpack,
   '/大前端/': frontend,
   '/工具/': tool,
-  '/解决方案/': solution
+  '/解决方案/': solution,
+  '/随手记/': notes
 }
