@@ -22,7 +22,10 @@ const webpack = [
     title: 'webpack',
     collapsable: false,
     children: [
-      'introduction'
+      'introduction',
+      '打包js',
+      '文件输出管理',
+      '样式处理'
     ]
   }
 ]
@@ -50,6 +53,7 @@ const solution = [
 ]
 
 const notes = [
+  '言摘文摘',
   '晚间乌云'
 ]
 

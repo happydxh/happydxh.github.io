@@ -42,6 +42,7 @@ module.exports = {
     {
       text: '随手记',
       items: [
+        { text: '言摘文摘', link: '/passages/2019-08-11-wen/' },
         { text: '晚间乌云', link: '/passages/2019-08-11-yun/' }
       ] 
     },
