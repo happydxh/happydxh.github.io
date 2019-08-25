@@ -25,7 +25,9 @@ const webpack = [
       'introduction',
       '打包js',
       '文件输出管理',
-      '样式处理'
+      '样式处理',
+      'image与font处理',
+      'es6转换'
     ]
   }
 ]

@@ -132,3 +132,5 @@ module.exports = {
 ```
 
 给输出文件名加上`hash`以后，我们在运行`npm run build`,，会发现dist目录中会生成一个`bundle.b9f55737.js`文件
+
+demo地址：[github](https://github.com/happydxh/webpack/tree/master/demo01)
