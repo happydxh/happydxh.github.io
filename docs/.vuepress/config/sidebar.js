@@ -46,6 +46,7 @@ const frontend = [
 const tool = [
   'markdown',
   'git',
+  'nvm-nrm',
   'travis-ci'
 ]
 

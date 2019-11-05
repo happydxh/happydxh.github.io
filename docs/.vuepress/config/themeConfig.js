@@ -27,6 +27,7 @@ module.exports = {
       items: [
         { text: 'markdown语法', link: '/passages/2019-07-10-tool-markdown/' },
         { text: 'git', link: '/passages/2019-07-10-tool-git/' },
+        { text: 'nvm和nrm', link: '/passages/2019-11-05-tool-nvm-mrm/' },
         { text: 'Travis Ci', link: '/passages/2019-08-04-travis-ci/' }
       ] 
     },
